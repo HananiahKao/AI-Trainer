@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/sh
 pip install -r requirements.txt
 ./fetch_github_repos.sh &
 python3 ./train-and-generate.py &
