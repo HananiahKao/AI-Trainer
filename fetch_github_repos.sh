@@ -30,7 +30,6 @@ fetch_users() {                                # [Line 27]
     while true; do                           # [Line 28]
         echo "Fetching users since ID: $SINCE..."
         USERS_JSON=$(curl -s "$GITHUB_API/users?since=$SINCE&per_page=$PER_PAGE")  # [Line 30]
-        echo "$USERS_JSON" | jq .   # [Line 30.1] For debugging: visualize the JSON structure
         LOGINS=($(echo "$USERS_JSON" | jq -r '.[].login'))  # [Line 31]
         LAST_ID=$(echo "$USERS_JSON" | jq -r '.[-1].id')      # [Line 32]
         if [ -z "$LAST_ID" ] || [ "${#LOGINS[@]}" -eq 0 ]; then  # [Line 34]
