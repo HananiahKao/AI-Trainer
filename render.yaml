@@ -2,6 +2,5 @@ services:
   - type: worker
     name: ai-trainer
     runtime: python
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "python3 train-and-generate.py"
+    buildCommand: "pip install -r requirements.txt&&python3 train-and-generate.py"
     autoDeploy: true
