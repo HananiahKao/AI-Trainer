@@ -3,7 +3,7 @@
 GITHUB_API="https://api.github.com"           # [Line 2]
 PER_PAGE=100                                  # [Line 3]
 STATE_FILE="process_state.txt"                # [Line 4]
-BASE_DIR="/Users/hananiah"                               # [Line 5]
+BASE_DIR=$(pwd)                               # [Line 5]
 REPOS_DIR="$BASE_DIR/repos"                   # [Line 6]
 READMES_DIR="$BASE_DIR/READMEs"               # [Line 7]
 
