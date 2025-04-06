@@ -29,7 +29,7 @@ update_state() {                               # [Line 21]
 fetch_users() {                                # [Line 27]
     while true; do                           # [Line 28]
         echo "Fetching users since ID: $SINCE..."
-        USERS_JSON=$(curl -s "$GITHUB_API/users?since=$SINCE&per_page=$PER_PAGE")  # [Line 30]
+        USERS_JSON=$(curl -H "Authorization: token $GITHUB_TOKEN" -s "$GITHUB_API/users?since=$SINCE&per_page=$PER_PAGE")  # [Line 30]
         LOGINS=($(echo "$USERS_JSON" | jq -r '.[].login'))  # [Line 31]
         LAST_ID=$(echo "$USERS_JSON" | jq -r '.[-1].id')      # [Line 32]
         if [ -z "$LAST_ID" ] || [ "${#LOGINS[@]}" -eq 0 ]; then  # [Line 34]
