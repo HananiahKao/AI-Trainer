@@ -55,7 +55,7 @@ fetch_users() {                                # [Line 27]
             fi
 
             echo "Processing user: $LOGIN"   # [Line 55]
-            REPOS_JSON=$(curl -s "$GITHUB_API/users/$LOGIN/repos?per_page=100")  # [Line 56]
+            REPOS_JSON=$(curl -H "Authorization: token $GITHUB_TOKEN" -s "$GITHUB_API/users/$LOGIN/repos?per_page=100")  # [Line 56]
             REPO_URLS=($(echo "$REPOS_JSON" | jq -r '.[].clone_url'))  # [Line 57]
             REPO_NAMES=($(echo "$REPOS_JSON" | jq -r '.[].name'))       # [Line 58]
 
