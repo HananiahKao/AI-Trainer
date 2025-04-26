@@ -6,4 +6,4 @@ chmod -R go-w "$(brew --prefix)/share/zsh"
 brew install ollama
 ollama serve &
 ollama pull mistral
-pip3 install -r requirements.txt
+pip install -r requirements.txt
