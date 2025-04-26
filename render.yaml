@@ -1,6 +1,7 @@
 services:
   - type: worker
     name: ai-trainer
-    runtime: python
+    runtime: python3
     buildCommand: "./build.sh"
+    startCommand: "python3 -m gunicorn MyFirstProject.asgi:application -k uvicorn.workers.UvicornWorker"
     autoDeploy: true
