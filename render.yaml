@@ -3,5 +3,5 @@ services:
     name: ai-trainer
     runtime: python3
     buildCommand: "./build.sh"
-    startCommand: "cd AIServererver;python3 -m gunicorn AIServer.asgi:application -k uvicorn.workers.UvicornWorker"
+    startCommand: "cd AIServer;python3 -m gunicorn AIServer.asgi:application -k uvicorn.workers.UvicornWorker"
     autoDeploy: true
