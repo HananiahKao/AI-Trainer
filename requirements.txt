@@ -1,6 +1,5 @@
 gunicorn
 uuid
-time
 requests
 django
 uvicorn
