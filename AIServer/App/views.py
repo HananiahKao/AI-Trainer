@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
-OLLAMA_MODEL    = "granite3.2-vision"           # correct model name
+OLLAMA_MODEL    = "mistral"           # correct model name
 OLLAMA_ENDPOINT = "http://localhost:11434/api/chat"
 
 @csrf_exempt
