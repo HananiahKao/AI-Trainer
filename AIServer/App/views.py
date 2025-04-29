@@ -163,10 +163,23 @@ def chat_view(request):
         ]
     })
 
+from pygments.style import Style
+class XcodeJSONLightStyle(Style):
+     default_style = ""
+     background_color = None
+     from pygments.token import Token, String, Number, Keyword, Name, Punctuation
+     styles = {
+         Token.String: "#C41A16",         # Strings: original color
+         Token.Number: "#272AD8",         # Numbers: original color
+         Token.Keyword: "bold #A33DA4",   # Keywords (true, false, null): bold + new color
+         Token.Name.Tag: "#947103",       # Keys: RGB(148, 113, 3)
+         Token.Punctuation: "#2B2B2B",    # Punctuation: dark gray
+     }
+
 
 def prettify_and_colorize_JSON(data):
     prittied = json.dumps(data, indent=2)
     from pygments import highlight, lexers, formatters
-    colorful_json = highlight(prittied, lexers.JsonLexer(), formatters.Terminal256Formatter())
+    colorful_json = highlight(prittied, lexers.JsonLexer(), formatters.Terminal256Formatter(style=XcodeJSONLightStyle))
     return colorful_json
 
