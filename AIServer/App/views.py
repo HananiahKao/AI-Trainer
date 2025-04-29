@@ -22,7 +22,11 @@ def chat_view(request):
         return JsonResponse({
             "error": f'Invalid "messages": expected list, got {type(messages).__name__}'
         }, status=400)
-
+    sys_messages_from_me = {
+    "role": "system",
+    "content": "Don't attempt to execute tools by writing its name in your response."
+}
+    messages.insert(0, sys_messages_from_me)
     # 3) Build payload for Ollama (Granite 3.2 supports tools)  [oai_citation:3‡Ollama](https://ollama.com/library/granite3.2?utm_source=chatgpt.com)
 
     payload = {
@@ -42,7 +46,7 @@ def chat_view(request):
         payload["tool_choice"] = data["tool_choice"]
     # 4) Call Ollama
     try:
-        print(json.dumps(payload, indent=2))
+        print(prettify_and_colorize_JSON(payload))
         resp = requests.post(OLLAMA_ENDPOINT, json=payload)
         resp.raise_for_status()
     except requests.RequestException as e:
@@ -60,11 +64,44 @@ def chat_view(request):
 
     # 6) If model invoked a tool, return DeepSeek-style tool_calls  [oai_citation:5‡IBM - United States](https://www.ibm.com/granite/docs/models/granite/?utm_source=chatgpt.com)
     print("\n\nRespond:\n\n")
-    print(json.dumps(ollama_data, indent=2))
+    print(prettify_and_colorize_JSON(ollama_data))
+
     tool_calls = msg.get("tool_calls") or []
     if tool_calls:
         tc = tool_calls[0]
         fn = tc.get("function", {})
+
+
+
+        print(prettify_and_colorize_JSON({
+            "id":       "chatcmpl-" + uuid.uuid4().hex,
+            "object":   "chat.completion",
+            "created":  int(time.time()),
+            "model":    OLLAMA_MODEL,
+            "choices": [
+                {
+                    "index": 0,
+                    "message": {
+                        "role":    "assistant",
+                        "content": None,
+                        "tool_calls": [
+                            {
+                                "id":   tc.get("id"),
+                                "type": "function",
+                                "function": {
+                                    "name":      fn.get("name"),
+                                    "arguments": json.dumps(fn.get("arguments", {}))
+                                }
+                            }
+                        ]
+                    },
+                    "finish_reason": "tool_calls"
+                }
+            ]
+        }))
+
+
+
         return JsonResponse({
             "id":       "chatcmpl-" + uuid.uuid4().hex,
             "object":   "chat.completion",
@@ -93,6 +130,22 @@ def chat_view(request):
         })
 
     # 7) Otherwise, return normal assistant reply
+    print(prettify_and_colorize_JSON({
+        "id":       "chatcmpl-" + uuid.uuid4().hex,
+        "object":   "chat.completion",
+        "created":  int(time.time()),
+        "model":    OLLAMA_MODEL,
+        "choices": [
+            {
+                "index": 0,
+                "message": {
+                    "role":    "assistant",
+                    "content": msg.get("content", "")
+                },
+                "finish_reason": "stop"
+            }
+        ]
+    }))
     return JsonResponse({
         "id":       "chatcmpl-" + uuid.uuid4().hex,
         "object":   "chat.completion",
@@ -109,3 +162,11 @@ def chat_view(request):
             }
         ]
     })
+
+
+def prettify_and_colorize_JSON(data):
+    prittied = json.dumps(data, indent=2)
+    from pygments import highlight, lexers, formatters
+    colorful_json = highlight(prittied, lexers.JsonLexer(), formatters.Terminal256Formatter())
+    return colorful_json
+
